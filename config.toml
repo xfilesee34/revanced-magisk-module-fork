@@ -18,4 +18,5 @@ module-prop-name = "ytrv-magisk"
 cli-source = "revanced/revanced-cli"
 patches-source = "revanced/revanced-patches"
 integrations-source = "revanced/revanced-integrations"
+riplib = false
 enabled = true
