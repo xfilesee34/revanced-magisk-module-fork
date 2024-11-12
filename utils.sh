@@ -36,7 +36,7 @@ abort() {
 }
 
 get_rv_prebuilts() {
-	local cli_src=$1 cli_ver=$2 integrations_src=$3 integrations_ver=$4 patches_src=$5 patches_ver=$6
+	local cli_src=$1 cli_ver=$2 patches_src=$5 patches_ver=$6
 	pr "Getting prebuilts (${patches_src%/*})" >&2
 	local cl_dir=${patches_src%/*}
 	cl_dir=${TEMP_DIR}/${cl_dir,,}-rv
