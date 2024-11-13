@@ -20,3 +20,4 @@ patches-source = "revanced/revanced-patches"
 integrations-source = "revanced/revanced-integrations"
 riplib = false
 enabled = true
+remove-rv-integrations-checks = false
