@@ -21,3 +21,9 @@ patches-source = "revanced/revanced-patches"
 integrations-source = "revanced/revanced-integrations"
 riplib = false
 enabled = true
+
+[Twitter]
+enabled = true
+build-mode = "apk"
+excluded-patches = "'Hide view count' "
+apkmirror-dlurl = "https://www.apkmirror.com/apk/twitter-inc/twitter/"
