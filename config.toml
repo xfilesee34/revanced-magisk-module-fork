@@ -32,3 +32,4 @@ cli-source = "revanced/revanced-cli"
 patches-source = "revanced/revanced-patches"
 #patches-version = "v5.2.4-dev.1"
 integrations-source = "revanced/revanced-integrations"
+riplib = false
