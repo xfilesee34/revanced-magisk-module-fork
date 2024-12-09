@@ -7,7 +7,7 @@ remove-rv-integrations-checks = false
 # you can use rvmm-config-gen to generate a config
 
 [YouTube]
-app-name = "xf"
+app-name = "xf-yt"
 build-mode = "apk"                                                   # 'both', 'apk' or 'module'
 excluded-patches = "'Spoof device dimensions' 'Enable debugging' 'Swipe controls' 'Enable tablet layout' 'Tablet mini player' 'Theme' 'Wide searchbar'"
 included-patches = "'Custom branding'"                                                 # space-seperated patches to include (non-excluded patches are included by default)
@@ -23,6 +23,7 @@ riplib = false
 enabled = true
 
 [Twitter]
+app-name = "xf-tw"
 enabled = true
 apkmirror-dpi = "120-640dpi"
 apkmirror-dlurl = "https://apkmirror.com/apk/twitter-inc/twitter/"
