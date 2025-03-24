@@ -1,5 +1,5 @@
 enable-magisk-update = false   # set this to false if you do not want to receive updates for the module in magisk app
-remove-rv-integrations-checks = false
+remove-rv-integrations-checks = true
 
 # add 'enabled = false' for not patching a specific app or remove it from the config
 # see https://github.com/j-hc/revanced-magisk-module/blob/main/CONFIG.md for more detailed explanations
@@ -24,7 +24,7 @@ enabled = true
 
 [Twitter]
 app-name = "xf-tw"
-enabled = true
+enabled = false
 apkmirror-dpi = "120-640dpi"
 apkmirror-dlurl = "https://apkmirror.com/apk/twitter-inc/twitter/"
 #included-patches = "'Open links with app chooser'"
