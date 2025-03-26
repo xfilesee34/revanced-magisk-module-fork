@@ -38,3 +38,4 @@ riplib = false
 [Spotify]
 enabled = true
 uptodown-dlurl = "https://spotify.en.uptodown.com/android"
+arch = "arm64-v8a" 
