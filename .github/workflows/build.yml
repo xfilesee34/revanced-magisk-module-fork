@@ -25,12 +25,6 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Fix executable permissions
-        run: |
-          chmod +x build.sh utils.sh
-          chmod +x bin/toml/tq-* bin/htmlq/htmlq-* bin/aapt2/aapt2-*
-
-
       - name: Update config
         if: ${{ inputs.from_ci }}
         run: |
