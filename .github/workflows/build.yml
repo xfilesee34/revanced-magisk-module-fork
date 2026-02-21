@@ -25,6 +25,12 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Fix executable permissions
+        run: |
+          chmod +x build.sh utils.sh
+          chmod +x bin/toml/tq-* bin/htmlq/htmlq-* bin/aapt2/aapt2-*
+
+
       - name: Update config
         if: ${{ inputs.from_ci }}
         run: |
@@ -86,8 +92,8 @@ jobs:
           }
 
           cd build || { echo "build folder not found"; exit 1; }
-          for OUTPUT in *magisk*.zip; do
-            [ "$OUTPUT" = "*magisk*.zip" ] && continue
+          for OUTPUT in *module*.zip; do
+            [ "$OUTPUT" = "*module*.zip" ] && continue
             ZIP_S=$(unzip -p "$OUTPUT" module.prop)
             if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
             UPDATE_JSON="${UPDATE_JSON##*/}"
