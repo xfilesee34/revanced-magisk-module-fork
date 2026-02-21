@@ -1,5 +1,5 @@
-enable-magisk-update = false   # set this to false if you do not want to receive updates for the module in magisk app
-remove-rv-integrations-checks = false
+enable-module-update = false # set this to false if you do not want to receive updates for the module
+parallel-jobs = 1
 
 # add 'enabled = false' for not patching a specific app or remove it from the config
 # see https://github.com/j-hc/revanced-magisk-module/blob/main/CONFIG.md for more detailed explanations
@@ -13,7 +13,7 @@ excluded-patches = "'Spoof device dimensions' 'Enable debugging' 'Swipe controls
 included-patches = "'Custom branding'"                                                 # space-seperated patches to include (non-excluded patches are included by default)
 #version = "auto"                                                      # 'auto', 'latest', 'beta' or a custom one like '17.40.41'
 #archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
-apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube" # fallback
+#apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube" # fallback
 #version = "19.01.34"
 module-prop-name = "ytrv-magisk"
 cli-source = "revanced/revanced-cli"
@@ -21,21 +21,94 @@ patches-source = "revanced/revanced-patches"
 integrations-source = "revanced/revanced-integrations"
 riplib = false
 enabled = true
+#build-mode = "both"
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
+uptodown-dlurl = "https://youtube.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
 
-[Twitter]
-app-name = "xf-tw"
-enabled = false
-apkmirror-dpi = "120-640dpi"
-apkmirror-dlurl = "https://apkmirror.com/apk/twitter-inc/twitter/"
-#included-patches = "'Open links with app chooser'"
-excluded-patches = "'Change link sharing domain' 'Open links with app chooser' 'Dynamic color'"
-cli-source = "revanced/revanced-cli"
-patches-source = "revanced/revanced-patches"
-#patches-version = "v5.2.4-dev.1"
-integrations-source = "revanced/revanced-integrations"
+[YouTube-Morphe]
+enabled = true
+#app-name = "YouTube"
+app-name = "xf-Morphe"
+patches-source = "MorpheApp/morphe-patches"
+cli-source = "MorpheApp/morphe-cli"
+rv-brand = "Morphe"
+build-mode = "apk"  
+#build-mode = "both"
+excluded-patches = "'Spoof device dimensions' 'Enable debugging' 'Swipe controls' 'Enable tablet layout' 'Tablet mini player' 'Theme' 'Wide searchbar'"
+included-patches = "'Custom branding'"                                                 # space-seperated patches to include (non-excluded patches are included by default)
 riplib = false
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
+uptodown-dlurl = "https://youtube.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
+
+[Music]
+enabled = false
+build-mode = "both"
+arch = "both"
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube-music"
+uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.youtube.music"
+
+[Music-Morphe]
+enabled = false
+app-name = "Music"
+patches-source = "MorpheApp/morphe-patches"
+cli-source = "MorpheApp/morphe-cli"
+rv-brand = "Morphe"
+build-mode = "both"
+arch = "both"
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube-music"
+uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.youtube.music"
+
+[Reddit-Morphe]
+enabled = false
+app-name = "Reddit"
+rv-brand = "Morphe"
+patches-source = "MorpheApp/morphe-patches"
+cli-source = "MorpheApp/morphe-cli"
+apkmirror-dlurl = "https://www.apkmirror.com/apk/redditinc/reddit/"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.reddit.frontpage"
+uptodown-dlurl = "https://reddit-official-app.en.uptodown.com/android"
+dpi = "120-640dpi"
+
+[GooglePhotos]
+enabled = false
+build-mode = "both"
+arch = "both"
+apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/photos/"
+uptodown-dlurl = "https://google-photos.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.photos"
 
 [Spotify]
-enabled = true
+enabled = false
 uptodown-dlurl = "https://spotify.en.uptodown.com/android"
-arch = "arm64-v8a" 
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.spotify.music"
+
+[Twitch]
+enabled = false
+apkmirror-dlurl = "https://www.apkmirror.com/apk/twitch-interactive-inc/twitch/"
+uptodown-dlurl = "https://twitch.en.uptodown.com/android"
+# archive-dlurl = "https://archive.org/download/jhc-apks/apks/tv.twitch.android.app"
+
+[Twitter]
+enabled = false
+apkmirror-dlurl = "https://www.apkmirror.com/apk/x-corp/twitter"
+build-mode = "apk"
+dpi = "120-640dpi"
+# archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.twitter.android"
+
+[TikTok]
+enabled = false
+# archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.zhiliaoapp.musically"
+included-patches = "'SIM spoof'"
+
+[Messenger]
+enabled = false
+apkmirror-dlurl = "https://www.apkmirror.com/apk/facebook-2/messenger/"
+arch = "arm64-v8a"
+
+[IconPackStudio]
+enabled = false
+apkmirror-dlurl = "https://www.apkmirror.com/apk/smart-launcher-team/icon-pack-studio/"
