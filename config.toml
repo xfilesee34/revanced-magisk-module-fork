@@ -31,6 +31,7 @@ enabled = true
 #app-name = "YouTube"
 app-name = "xf-Morphe"
 patches-source = "MorpheApp/morphe-patches"
+patches-version = "v1.17.0"
 cli-source = "MorpheApp/morphe-cli"
 cli-version = "v1.4.0"       # 'latest', 'dev', or a version number. default: "latest"
 rv-brand = "Morphe"
