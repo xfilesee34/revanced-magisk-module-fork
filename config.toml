@@ -32,6 +32,7 @@ enabled = true
 app-name = "xf-Morphe"
 patches-source = "MorpheApp/morphe-patches"
 cli-source = "MorpheApp/morphe-cli"
+cli-version = "v1.4.0"       # 'latest', 'dev', or a version number. default: "latest"
 rv-brand = "Morphe"
 build-mode = "apk"  
 #build-mode = "both"
