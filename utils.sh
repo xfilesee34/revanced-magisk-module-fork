@@ -132,18 +132,43 @@ get_prebuilts() {
 					matches=$matches_new
 				fi
 			fi
-			if [ "$(jq 'length' <<<"$matches")" -eq 0 ]; then
+			if [ "$(jq 'length' <<<"$matches")" -eq 0 ] && [ "$gitlab_patches" = true ]; then
+				local source_url source_zip source_dir source_root built_file
+				source_url=$(jq -e -r '.assets.sources[] | select(.format == "zip") | .url' <<<"$resp") || return 1
+				source_zip="${dir}/revanced-patches-${tag_name}.zip"
+				source_dir="${dir}/revanced-patches-${tag_name}-src"
+				gh_dl "$source_zip" "$source_url" >&2 || return 1
+				rm -rf "$source_dir"
+				mkdir -p "$source_dir" || return 1
+				unzip -qo "$source_zip" -d "$source_dir" || return 1
+				source_root=$(find "$source_dir" -mindepth 1 -maxdepth 1 -type d | head -1)
+				[ -n "$source_root" ] || return 1
+				(
+					cd "$source_root" || return 1
+					chmod +x gradlew || :
+					./gradlew --no-daemon :patches:build || return 1
+				) >&2 || return 1
+				built_file=$(find "$source_root/patches/build/libs" -name 'patches-*.rvp' ! -name '*sources*' ! -name '*javadoc*' -type f | head -1)
+				[ -n "$built_file" ] || return 1
+				name=$(basename "$built_file")
+				file="${dir}/${name}"
+				cp -f "$built_file" "$file" || return 1
+				echo "$tag: $(cut -d/ -f1 <<<"$src_path")/${name}  " >>"${cl_dir}/changelog.md"
+				matches='[]'
+			elif [ "$(jq 'length' <<<"$matches")" -eq 0 ]; then
 				epr "No asset was found"
 				return 1
 			elif [ "$(jq 'length' <<<"$matches")" -ne 1 ]; then
 				wpr "More than 1 asset was found for this release. Falling back to the first one found..."
 			fi
-			asset=$(jq -r ".[0]" <<<"$matches")
-			url=$(jq -r .url <<<"$asset")
-			name=$(jq -r .name <<<"$asset")
-			file="${dir}/${name}"
-			gh_dl "$file" "$url" >&2 || return 1
-			echo "$tag: $(cut -d/ -f1 <<<"$src_path")/${name}  " >>"${cl_dir}/changelog.md"
+			if [ "$matches" != '[]' ]; then
+				asset=$(jq -r ".[0]" <<<"$matches")
+				url=$(jq -r .url <<<"$asset")
+				name=$(jq -r .name <<<"$asset")
+				file="${dir}/${name}"
+				gh_dl "$file" "$url" >&2 || return 1
+				echo "$tag: $(cut -d/ -f1 <<<"$src_path")/${name}  " >>"${cl_dir}/changelog.md"
+			fi
 		else
 			grab_cl=false
 			local for_err=$file
