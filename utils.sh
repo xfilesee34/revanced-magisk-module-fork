@@ -146,7 +146,16 @@ get_prebuilts() {
 				(
 					cd "$source_root" || return 1
 					chmod +x gradlew || :
-					./gradlew --no-daemon :patches:build || return 1
+					local gh_packages_user=${githubPackagesUsername:-${GITHUB_ACTOR:-x-access-token}}
+					local gh_packages_pass=${githubPackagesPassword:-${GITHUB_TOKEN:-}}
+					if [ -z "$gh_packages_pass" ]; then
+						epr "GITHUB_TOKEN or githubPackagesPassword is required to build ReVanced patches from GitLab source"
+						return 1
+					fi
+					./gradlew --no-daemon \
+						-PgithubPackagesUsername="$gh_packages_user" \
+						-PgithubPackagesPassword="$gh_packages_pass" \
+						:patches:build || return 1
 				) >&2 || return 1
 				built_file=$(find "$source_root/patches/build/libs" -name 'patches-*.rvp' ! -name '*sources*' ! -name '*javadoc*' -type f | head -1)
 				[ -n "$built_file" ] || return 1
