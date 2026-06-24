@@ -52,8 +52,16 @@ java() { env -i java "$@"; }
 
 get_prebuilts() {
 	local cli_src=$1 cli_ver=$2 patches_src=$3 patches_ver=$4
-	pr "Getting prebuilts (${patches_src%/*})" >&2
-	local cl_dir=${patches_src%/*}
+	local patches_src_path=${patches_src#https://gitlab.com/}
+	patches_src_path=${patches_src_path#http://gitlab.com/}
+	patches_src_path=${patches_src_path#gitlab.com/}
+	patches_src_path=${patches_src_path#https://github.com/}
+	patches_src_path=${patches_src_path#http://github.com/}
+	patches_src_path=${patches_src_path#github.com/}
+	patches_src_path=${patches_src_path%.git}
+	if [ "${patches_src_path,,}" = "revanced/revanced-patches" ]; then patches_src_path="ReVanced/revanced-patches"; fi
+	pr "Getting prebuilts (${patches_src_path%/*})" >&2
+	local cl_dir=${patches_src_path%/*}
 	cl_dir=${TEMP_DIR}/${cl_dir,,}-rv
 	[ -d "$cl_dir" ] || mkdir "$cl_dir"
 
@@ -67,21 +75,39 @@ get_prebuilts() {
 			local grab_cl=true
 		else abort unreachable; fi
 
-		local dir=${src%/*}
+		local src_path=${src#https://gitlab.com/}
+		src_path=${src_path#http://gitlab.com/}
+		src_path=${src_path#gitlab.com/}
+		src_path=${src_path#https://github.com/}
+		src_path=${src_path#http://github.com/}
+		src_path=${src_path#github.com/}
+		src_path=${src_path%.git}
+		local gitlab_patches=false
+		if [ "$tag" = "Patches" ] && [ "${src_path,,}" = "revanced/revanced-patches" ]; then
+			gitlab_patches=true
+			src_path="ReVanced/revanced-patches"
+		fi
+
+		local dir=${src_path%/*}
 		dir=${TEMP_DIR}/${dir,,}-rv
 		[ -d "$dir" ] || mkdir "$dir"
 
-		local rv_rel="https://api.github.com/repos/${src}/releases" name_ver
+		local rv_rel name_ver
+		if [ "$gitlab_patches" = true ]; then
+			rv_rel="https://gitlab.com/api/v4/projects/ReVanced%2Frevanced-patches/releases"
+		else
+			rv_rel="https://api.github.com/repos/${src_path}/releases"
+		fi
 		if [ "$ver" = "dev" ]; then
 			local resp
 			resp=$(gh_req "$rv_rel" -) || return 1
 			ver=$(jq -e -r '.[] | .tag_name' <<<"$resp" | get_highest_ver) || return 1
 		fi
 		if [ "$ver" = "latest" ]; then
-			rv_rel+="/latest"
+			if [ "$gitlab_patches" != true ]; then rv_rel+="/latest"; fi
 			name_ver="*"
 		else
-			rv_rel+="/tags/${ver}"
+			if [ "$gitlab_patches" = true ]; then rv_rel+="/${ver}"; else rv_rel+="/tags/${ver}"; fi
 			name_ver="$ver"
 		fi
 
@@ -90,8 +116,15 @@ get_prebuilts() {
 		if [ -z "$file" ]; then
 			local resp asset name
 			resp=$(gh_req "$rv_rel" -) || return 1
+			if [ "$gitlab_patches" = true ] && [ "$ver" = "latest" ]; then
+				resp=$(jq -e -r '[.[] | select(.tag_name | contains("-dev") | not)][0]' <<<"$resp") || return 1
+			fi
 			tag_name=$(jq -r '.tag_name' <<<"$resp")
-			matches=$(jq -e '.assets | map(select(.name | (endswith("asc") or endswith("json")) | not))' <<<"$resp")
+			if [ "$gitlab_patches" = true ]; then
+				matches=$(jq -e '[.assets.links[]? | select(.name | (endswith("asc") or endswith("json")) | not) | {name, url: (.direct_asset_url // .url)}]' <<<"$resp")
+			else
+				matches=$(jq -e '.assets | map(select(.name | (endswith("asc") or endswith("json")) | not))' <<<"$resp")
+			fi
 			if [ "$(jq 'length' <<<"$matches")" -gt 1 ]; then
 				local matches_new
 				matches_new=$(jq -e -r 'map(select(.name | contains("-dev") | not))' <<<"$matches")
@@ -110,7 +143,7 @@ get_prebuilts() {
 			name=$(jq -r .name <<<"$asset")
 			file="${dir}/${name}"
 			gh_dl "$file" "$url" >&2 || return 1
-			echo "$tag: $(cut -d/ -f1 <<<"$src")/${name}  " >>"${cl_dir}/changelog.md"
+			echo "$tag: $(cut -d/ -f1 <<<"$src_path")/${name}  " >>"${cl_dir}/changelog.md"
 		else
 			grab_cl=false
 			local for_err=$file
@@ -124,7 +157,13 @@ get_prebuilts() {
 		fi
 
 		if [ "$tag" = "Patches" ]; then
-			if [ $grab_cl = true ]; then echo -e "[Changelog](https://github.com/${src}/releases/tag/${tag_name})\n" >>"${cl_dir}/changelog.md"; fi
+			if [ $grab_cl = true ]; then
+				if [ "$gitlab_patches" = true ]; then
+					echo -e "[Changelog](https://gitlab.com/ReVanced/revanced-patches/-/releases/${tag_name})\n" >>"${cl_dir}/changelog.md"
+				else
+					echo -e "[Changelog](https://github.com/${src}/releases/tag/${tag_name})\n" >>"${cl_dir}/changelog.md"
+				fi
+			fi
 			if [ "$REMOVE_RV_INTEGRATIONS_CHECKS" = true ]; then
 				local extensions_ext
 				extensions_ext=$(unzip -l "${file}" "extensions/shared.*" | grep -o "shared\..*") extensions_ext="${extensions_ext#*.}"
